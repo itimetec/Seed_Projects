@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+.user-profile{
+  width: 100px;
+  margin-left: 600px;
+  margin-right: 20px;
+  margin-top: 0px;
+  position: relative;
+  color: rgb(79, 175, 204);
+  padding: 20px;
+}
+.modal-sm {
+  width: 200px;
+}
+.modal-backdrop.show {
+ display: none;
+}

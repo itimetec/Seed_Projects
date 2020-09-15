@@ -1,0 +1,75 @@
+<nav id="sidebar" *ngIf="!buttonToggler" class="bg-info">
+  <div class="sidebar-header">
+      <h3>{{'Welcome' | translate}}
+      <button (click)="onButtonClick()"><i class="fa fa-arrow-left"></i></button>
+      </h3>
+  </div>
+
+  <ul class="components">
+      <li class="active">
+          <a>{{'Home' | translate}}</a>
+      </li>
+      <li>
+          <a>{{'About' | translate}}</a>
+      </li>
+      <li>
+          <a>{{'Pages' | translate}}</a>
+      </li>
+      <li>
+          <a >{{'Portfolio' | translate}}</a>
+      </li>
+      <li>
+          <a>{{'Contact' | translate}}</a>
+      </li>
+  </ul>
+</nav>
+
+<div id="content" [ngClass]="{'active': buttonToggler}">
+  <nav class="navbar navbar-expand-lg bg-info">
+      <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="menu-button" *ngIf="buttonToggler" (click)="onButtonClick()">
+              <i class="fa fa-arrow-right"></i>
+          </button>
+          <button class="btn btn-dark d-inline-block d-lg-none" type="button" data-toggle="collapse"
+              data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+              <i class="fa fa-bars"></i>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="nav navbar-nav ml-auto">
+                  <li class="nav-item active">
+                      <div class="container">
+                        <a class="navbar-brand seedTitle">
+                            {{'ITT SEED' | translate }}
+                          </a>
+                          <a class="navbar-brand">
+                            {{'Title' | translate }}
+                          </a>
+                          <span class="form-inline">
+                            <select class="form-control" #selectedLang (change)="switchLang(selectedLang.value)">
+                              <option *ngFor="let language of translate.getLangs()" [value]="language"
+                                [selected]="language === translate.currentLang">
+                                {{ language }}
+                              </option>
+                            </select>
+                          </span>
+                        </div>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" (click)="open(mymodal)"><i class="fa fa-user-circle-o"></i></a>
+                    </li>
+              </ul>
+          </div>
+      </div>
+  </nav>
+  <ng-template #mymodal let-modal>
+    <div class="modal-body">
+          <a >{{'My Account' | translate }}</a><br/>
+          <a >{{'App Guide' | translate }}</a><br/>
+          <a >{{'Edit Profile' | translate }} </a><br/>
+          <a >{{'Settings' | translate }}</a><br/>
+          <a href="#contact">{{'Sign Out' | translate }}</a>
+    </div>
+  </ng-template>
+</div>
