@@ -1,0 +1,13 @@
+{
+  "pipeline": {
+    "jobs": {
+      "build": {
+        "label": "linuxslave",
+        "jenkinsFilePath": ".jenkins/job-dsl/Jenkinsfile.build"
+      }
+    }
+  },
+  "gitBranch": "sample-job-dsl",
+  "gitRefspec": "",
+  "emailRecipients" : "xxxx@intimetec.com"
+    }

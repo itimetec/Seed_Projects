@@ -1,0 +1,48 @@
+@Library('itt_job_dsl')
+
+import com.itt.jenkins_job_dsl.*
+
+def currentEnv = ''
+def nodeName = ''
+
+node {
+    checkout scm
+    currentEnv = utility.getCurrentEnvironment(env.JOB_NAME, utility.createFilePath("${workspace}/.jenkins/config"))
+    nodeName = utility.getNodeName(currentEnv, env.JOB_NAME)
+}
+
+node(nodeName) {
+    stage('Checkout') {
+            checkout scm
+    }
+
+    def envDetails = utility.loadEnvironment(currentEnv)
+    def emailRecipients = envDetails["emailRecipients"]
+
+    try {
+        def jobName = env.JOB_BASE_NAME.minus("-pipeline")
+        def hostName = envDetails["pipeline"]["jobs"]["${jobName}"]["server"]
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: envDetails["pipeline"]["jobs"]["${jobName}"]["credentialId"],
+                          usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+            withEnv(["server=${hostName}", "environment=${currentEnv}"]) {
+                stage('Running Build') {
+                    utility.runScript("steps.sh")
+                    utility.runScript("steps.bat")
+                }
+            }
+        }
+        currentBuild.result = 'SUCCESS'
+    } catch (any) {
+        currentBuild.result = 'FAILURE'
+        throw any
+    } finally {
+        emailext(
+            body: '$DEFAULT_BODY',
+            mimeType: 'text/html',
+            replyTo: '$DEFAULT_REPLYTO',
+            subject: '$DEFAULT_SUBJECT',
+            to: "$emailRecipients",
+            attachLog: true
+        )
+    }
+}

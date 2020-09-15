@@ -1,0 +1,57 @@
+{
+  "pipeline": {
+    "jobs": {
+      "build" : {
+        "label": "linuxslave",
+        "parameters" : {
+          "string" : {
+            "BRANCH_SPECIFIER": "refs/heads/feature/xyz"
+          },
+          "choice" : {
+            "FLYWAY_GOAL" : "migrate, info, validate, repair"
+          },
+          "extendedChoice": [
+            {
+              "name": "Services",
+              "description": "Create user in given services.",
+              "type": "PT_CHECKBOX",
+              "visibleItemCount": "2",
+              "value": "AWS, AD, Azure, Jira",
+              "delimiter": ","
+            }
+          ]
+        },
+        "buildsToKeep": 1,
+        "cloneOptions": {
+          "shallow": true,
+          "honorRefspec": false,
+          "timeout": 45
+        },
+        "jenkinsFilePath" : ".jenkins/job-dsl/Jenkinsfile.build",
+        "server" : "xxxx.ftp.azurewebsites.windows.net",
+        "credentialId" : "3bbc84f1-a0ff-43ac-84de-8a319dd3a11c",
+          "moduleName" : "api"
+      },
+      "test": {
+        "label": "windowslave",
+        "jenkinsFilePath" : ".jenkins/job-dsl/Jenkinsfile.test",
+        "server" : "xxxx.ftp.azurewebsites.windows.net",
+        "credentialId" : "e5eadfbe-6b86-47f5-a92b-830d65e029a9",
+        "moduleName" : "client"
+      },
+      "deploy": {
+        "label": "linuxslave",
+        "jenkinsFilePath" : ".jenkins/job-dsl/Jenkinsfile.deploy",
+        "server" : "xxxx.ftp.azurewebsites.windows.net",
+        "credentialId" : "bf497092-fefd-4d46-8d89-b232630e539c",
+        "moduleName" : "register"
+      }
+    }
+  },
+  "gitBranch": "sample-job-dsl",,
+  "gitRefspec": "+refs/heads/develop:refs/remotes/origin/develop",
+  "bitbucketPush": false,
+  "scmPollTrigger": true,
+  "modular": true,
+  "emailRecipients" : "xxxx@intimetec.com"
+}

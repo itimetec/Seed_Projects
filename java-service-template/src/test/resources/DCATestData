@@ -1,0 +1,194 @@
+[
+  {
+    "mac": "6C:3B:E5:02:C5:5A",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet MFP M725",
+    "projectId": "234568"
+  },
+  {
+    "mac": "3C:52:82:C1:3B:90",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Managed MFP E72525dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "40:B0:34:9D:30:61",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Enterprise Flow MFP M682z",
+    "projectId": "234568"
+  },
+  {
+    "mac": "50:65:F3:57:CF:C7",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Pro 400 MFP M425dw",
+    "projectId": "234568"
+  },
+  {
+    "mac": "40:B0:34:22:1B:7A",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 700 Color MFP M775DN",
+    "projectId": "234568"
+  },
+  {
+    "mac": "3C:52:82:2A:77:65",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Pro MFP M277dw",
+    "projectId": "234568"
+  },
+  {
+    "mac": "88:51:FB:E8:B9:8D",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet MFP M725",
+    "projectId": "234568"
+  },
+  {
+    "mac": "40:B0:34:22:1B:70",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 700 Color MFP M775DN",
+    "projectId": "234568"
+  },
+  {
+    "mac": "08:2E:5F:BC:5D:C2",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 700 Color MFP M775DN",
+    "projectId": "234568"
+  },
+  {
+    "mac": "9C:B6:54:1B:6E:6D",
+    "model": "Hewlett-Packard",
+    "make": "Officejet Enterprise Color X555dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "84:34:97:F7:13:96",
+    "model": "Hewlett-Packard",
+    "make": "Officejet Pro X576dw",
+    "projectId": "234568"
+  },
+  {
+    "mac": "3C:D9:2B:A3:B4:D2",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 500 color MFP M575f",
+    "projectId": "234568"
+  },
+  {
+    "mac": "38:63:BB:01:73:3A",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise M604n",
+    "projectId": "234568"
+  },
+  {
+    "mac": "00:26:73:11:F0:DC",
+    "model": "Ricoh",
+    "make": "Aficio MP 2550B",
+    "projectId": "234568"
+  },
+  {
+    "mac": "78:E3:B5:F6:CA:0B",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 500 color M551dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "10:60:4B:15:F7:56",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise Flow MFP M525c",
+    "projectId": "234568"
+  },
+  {
+    "mac": "40:B0:34:27:0A:0E",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Enterprise M653dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "D4:85:64:1E:09:C7",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet P4015n",
+    "projectId": "234568"
+  },
+  {
+    "mac": "00:1B:78:0A:7D:A7",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet M3035 MFP",
+    "projectId": "234568"
+  },
+  {
+    "mac": "18:A9:05:FD:BD:37",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet P3015",
+    "projectId": "234568"
+  },
+  {
+    "mac": "9C:B6:54:18:3E:73",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 600 M602dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "00:21:5A:7E:3C:D1",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet CM3530 MFP",
+    "projectId": "234568"
+  },
+  {
+    "mac": "74:46:A0:4E:EB:EC",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 500 MFP M525dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "A0:D3:C1:E6:6E:73",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Enterprise flow MFP M680z",
+    "projectId": "234568"
+  },
+  {
+    "mac": "2C:27:D7:0F:42:65",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet CP5520 Series",
+    "projectId": "234568"
+  },
+  {
+    "mac": "1C:C1:DE:16:D7:7F",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Enterprise CM4540 MFP",
+    "projectId": "234568"
+  },
+  {
+    "mac": "38:63:BB:01:73:54",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise M606dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "A0:D3:C1:7D:71:28",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Enterprise flow MFP M880Z",
+    "projectId": "234568"
+  },
+  {
+    "mac": "FC:3F:DB:4E:A4:D4",
+    "model": "Hewlett-Packard",
+    "make": "PageWide Managed Color Flow MFP E58650z",
+    "projectId": "234568"
+  },
+  {
+    "mac": "F4:30:B9:F0:2F:F9",
+    "model": "Hewlett-Packard",
+    "make": "Color LaserJet Managed MFP E77822dn",
+    "projectId": "234568"
+  },
+  {
+    "mac": "3C:D9:2B:A3:B4:D8",
+    "model": "Hewlett-Packard",
+    "make": "LaserJet Enterprise 500 color MFP M575f",
+    "projectId": "234568"
+  },
+  {
+    "mac": "9C:32:CE:09:5D:52",
+    "model": "Canon",
+    "make": "imageRUNNER ADVANCE C256iF II",
+    "projectId": "234568"
+  }
+]
