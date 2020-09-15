@@ -1,0 +1,30 @@
+//Common spacing styles
+
+.top-spacing {
+  margin-top: $spacing-80;
+}
+
+.hero-content {
+  align-content: center;
+  color: $white;
+  .content-wrap {
+    width: 100%;
+    height: 100%;
+  }
+  h1 {
+    color: $white;
+  }
+}
+
+.card-body {
+  @include card-format;
+}
+
+.footer {
+  position: absolute;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background-color: $light-gray;
+  border-top: 1px solid $dark-gray;
+}
