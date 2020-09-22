@@ -1,0 +1,72 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "email": "john@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "id": "2",
+      "email": "doe@gmail.com",
+      "password": "12345678"
+    },
+    {
+      "email": "shrirang@gmail.com",
+      "password": "12345678",
+      "id": "tFO8ou6"
+    },
+    {
+      "email": "shrirang.git@gmail.com",
+      "password": "12345678",
+      "id": "ZgM2OFN"
+    },
+    {
+      "email": "testuser@intimetec.com",
+      "password": "12345678",
+      "id": "q3H5Ht6"
+    },
+    {
+      "id": "665700",
+      "email": "shr@gmail.com",
+      "password": "12345678"
+    }
+  ],
+  "books": [
+    {
+      "name": "C Sharp",
+      "id": 2
+    },
+    {
+      "name": "JavaScript",
+      "id": 3
+    },
+    {
+      "name": "TypeScript",
+      "id": 4
+    },
+    {
+      "name": "ASP .Net",
+      "id": 5
+    },
+    {
+      "name": "Java",
+      "id": 6
+    },
+    {
+      "name": "Ruby",
+      "id": 7
+    },
+    {
+      "name": "Angular",
+      "id": 8
+    },
+    {
+      "name": "Swift",
+      "id": 9
+    },
+    {
+      "name": "Kotlin",
+      "id": 10
+    }
+  ]
+}

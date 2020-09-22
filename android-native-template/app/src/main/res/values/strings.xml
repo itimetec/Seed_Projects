@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Library App</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="enter_all_details">Please enter all the details</string>
+    <string name="ok">Ok</string>
+    <string name="success">Success</string>
+    <string name="error">Error</string>
+    <string name="invalid_details">Invalid Details</string>
+    <string name="log_out">Log Out</string>
+    <string name="add_book">Add Book</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="no_books">No Books</string>
+    <string name="book_name">Enter Book Name</string>
+    <string name="delete_book">Delete Book</string>
+    <string name="update_book">Update Book</string>
+</resources>
