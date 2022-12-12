@@ -1,0 +1,9 @@
+
+defaultBrowser: "chrome"
+
+chromeCapabilities:
+  - "--start-maximized"
+  - "--ignore-certificate-errors"
+
+fireFoxCapabilities:
+  - "-private-window"
