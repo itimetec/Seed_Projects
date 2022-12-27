@@ -1,0 +1,4 @@
+- expectedStatusCode: 201
+  validate:
+    - { propertyAttribute: 'name', propertyValue: "jitendra" }
+    - { propertyAttribute: 'job', propertyValue: "Software Engineer" }
