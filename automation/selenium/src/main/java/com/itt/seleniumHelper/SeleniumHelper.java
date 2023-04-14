@@ -209,40 +209,6 @@ public class SeleniumHelper {
         return element.findElement(childLocator);
     }
 
-    public static List<WebElement> findChildElements(WebElement element, final By childLocator) {
-        LOGGER.info("Finding the child element with locator: {} ...", childLocator);
-        return element.findElements(childLocator);
-    }
-
-    public static String getChildElementText(WebElement element, final By childLocator) {
-        String text = findChildElement(element, childLocator).getText();
-        LOGGER.info("Text obtained from the child locator: {} ...", childLocator);
-        return text;
-    }
-
-    public static String enterTextToChildElement(WebElement element, final By childLocator, String text) {
-        findChildElement(element, childLocator).sendKeys(text, Keys.ENTER);
-        LOGGER.info("Entering Text in the child locator: {} ...", childLocator);
-        return text;
-    }
-
-    public static String getChildElementAttributeValue(WebElement element, final By childLocator, String attributeName) {
-        String value = findChildElement(element, childLocator).getAttribute(attributeName);
-        LOGGER.info("Attribute value obtained from the child locator: {} ...", childLocator);
-        return value;
-    }
-
-    public static void waitAndClickChildElement(WebDriver driver, WebElement element, final By childLocator) {
-        LOGGER.info("Waiting for the child locator to be clickable: {} ...", childLocator);
-        Wait.elementToBeClickable(driver, childLocator);
-        findChildElement(element, childLocator).click();
-    }
-
-    public static void clickChildElement(WebDriver driver, WebElement element, final By childLocator) {
-        LOGGER.info("Waiting for the child locator to be clickable: {} ...", childLocator);
-        findChildElement(element, childLocator).click();
-    }
-
     public static boolean isClickable(WebDriver driver, WebElement locator) {
         LOGGER.info("Verifying clickability of element with locator: {} ...", locator);
         try {

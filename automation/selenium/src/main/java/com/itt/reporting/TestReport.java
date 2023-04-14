@@ -19,10 +19,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +47,7 @@ public class TestReport implements IReporter, ISuiteListener {
     private File testOutputDirectory;
     private int stackTraceCount = 0;
 
-    private static long suiteStartTimeInMilliseconds;
+    private long suiteStartTimeInMilliseconds;
 
     @Override
     public void onStart(ISuite suite) {
@@ -57,6 +56,7 @@ public class TestReport implements IReporter, ISuiteListener {
 
     @Override
     public void onFinish(ISuite suite) {
+        // Do nothing because we don't want any action while finishing execution.
     }
 
     @Override
@@ -66,27 +66,34 @@ public class TestReport implements IReporter, ISuiteListener {
 
         this.testSuites = suites;
         testOutputDirectory = new File(System.getProperty("user.dir"));
-        File report = new File(testOutputDirectory, reportName + (!reportName.equals("") ? "-" : "") + "testReport.html");
+        Path filePath = Paths.get(String.valueOf(testOutputDirectory), reportName + (!reportName.equals("") ? "-" : "") + "testReport.html");
+        File report = new File(String.valueOf(filePath));
+
         if (report.exists()) {
             LOGGER.info("Deleting the old existing report...");
-            Assert.assertTrue(report.delete(), "Test report not deleted");
+            try {
+                Files.delete(filePath);
+                Assert.assertTrue(Files.notExists(filePath), "File is not deleted");
+            } catch (IOException e) {
+                LOGGER.error("Unable to load the fie: [{}]", e.getStackTrace());
+            }
         }
 
         try {
             Assert.assertTrue(report.createNewFile(), "Test Report not created or Report with specific Name Exist");
             createReport(report);
-        } catch (IOException | InvalidKeyException | NoSuchAlgorithmException | ParseException e) {
+        } catch (IOException e) {
             LOGGER.error("Encountered error while saving triage report.", e);
         }
     }
 
-    private void createReport(File file) throws InvalidKeyException, NoSuchAlgorithmException, ParseException, IOException {
-        LOGGER.info("Saving report to \"" + file.getAbsolutePath() + "\"...");
+    private void createReport(File file) throws IOException {
+        LOGGER.info(String.format("Saving report to %s", file.getAbsolutePath()));
 
         htmlBuilder = new StringBuilder();
 
         generateDocumentHead();
-        generateSeleniumTable(getTestContext());
+        generateSeleniumTable();
         generateGraph();
 
         htmlBuilder.append(getTestLogLink());
@@ -121,7 +128,7 @@ public class TestReport implements IReporter, ISuiteListener {
             for (ISuiteResult result : suiteResult.values()) {
                 ITestContext context = result.getTestContext();
                 Collection<ITestNGMethod> skippedMethods = context.getSkippedTests().getAllMethods();
-                if (skippedMethods.size() > 0) {
+                if (!(skippedMethods.isEmpty())) {
                     Iterator<ITestNGMethod> skippedTestMethodsIterator = skippedMethods.iterator();
                     if (skippedTestMethodsIterator.hasNext()) {
                         skippedMethodNames.add(skippedTestMethodsIterator.next().getMethodName());
@@ -139,7 +146,7 @@ public class TestReport implements IReporter, ISuiteListener {
             for (ISuiteResult result : suiteResult.values()) {
                 ITestContext context = result.getTestContext();
                 Collection<ITestNGMethod> passedMethods = context.getSkippedTests().getAllMethods();
-                if (passedMethods.size() > 0) {
+                if (!(passedMethods.isEmpty())) {
                     Iterator<ITestNGMethod> passedTestMethodsIterator = passedMethods.iterator();
                     if (passedTestMethodsIterator.hasNext()) {
                         passedMethodNames.add(passedTestMethodsIterator.next().getMethodName());
@@ -157,7 +164,7 @@ public class TestReport implements IReporter, ISuiteListener {
             for (ISuiteResult result : suiteResult.values()) {
                 ITestContext context = result.getTestContext();
                 Collection<ITestNGMethod> failedMethods = context.getSkippedTests().getAllMethods();
-                if (failedMethods.size() > 0) {
+                if (!(failedMethods.isEmpty())) {
                     Iterator<ITestNGMethod> failedTestMethodsIterator = failedMethods.iterator();
                     if (failedTestMethodsIterator.hasNext()) {
                         failedMethodNames.add(failedTestMethodsIterator.next().getMethodName());
@@ -228,10 +235,8 @@ public class TestReport implements IReporter, ISuiteListener {
 
     /**
      * Writes the html header and defines the css styling.
-     *
-     * @throws ParseException
      */
-    private void generateDocumentHead() throws ParseException {
+    private void generateDocumentHead() {
         htmlBuilder.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">");
         htmlBuilder.append("<html>");
         htmlBuilder.append("<body>");
@@ -282,17 +287,17 @@ public class TestReport implements IReporter, ISuiteListener {
         htmlBuilder.append("<table>");
         htmlBuilder.append(String.format("<tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>",
                 "Test Case ID",
-                "Clean Test Case ID",
+                "Similar Test Case ID",
                 "Test Name",
                 "Groups",
                 "Duration"));
 
-        for (ITestResult result : getSortedMethods(map, new PassedTestSorter<ITestResult>())) {
+        for (ITestResult result : getSortedMethods(map, new PassedTestSorter())) {
             ITestNGMethod testMethod = result.getMethod();
             String groupsString = Arrays.toString(testMethod.getGroups()).replace("[", "").replace("]", "");
             htmlBuilder.append("<tr class=pass>");
             htmlBuilder.append(String.format("<td>%s</td>", getTestCase(testMethod)));
-            htmlBuilder.append(String.format("<td>%s</td>", getCleanTestCaseID(testMethod)));
+            htmlBuilder.append(String.format("<td>%s</td>", getSimilarTestCaseID(testMethod)));
             htmlBuilder.append(String.format("<td>%s<br><b>%s</b></td>",
                     testMethod.getTestClass().getName(),
                     getLogLink(testMethod, result)));
@@ -307,7 +312,7 @@ public class TestReport implements IReporter, ISuiteListener {
 
     private void generateWarnings(IResultMap... map) {
         BiMap<String, String> test = HashBiMap.create();
-        List<Pair<String, String>> warnings = new ArrayList<Pair<String, String>>();
+        List<Pair<String, String>> warnings = new ArrayList<>();
 
         for (IResultMap resultType : map) {
             for (ITestResult result : resultType.getAllResults()) {
@@ -317,7 +322,7 @@ public class TestReport implements IReporter, ISuiteListener {
             }
         }
 
-        if (warnings.size() > 0) {
+        if (!(warnings.isEmpty())) {
             htmlBuilder.append("<details>");
             htmlBuilder.append("<summary>Warnings</summary>");
 
@@ -378,12 +383,12 @@ public class TestReport implements IReporter, ISuiteListener {
         Tracking annotation = method.getAnnotation(Tracking.class);
         if (annotation != null) {
             String fqTestName = String.format("%s.%s", result.getMethod().getTestClass().getName(), result.getMethod().getMethodName());
-            if (!test.containsValue(annotation.TC())) {
-                test.put(result.getMethod().getTestClass().getName() + "." + method.getName(), annotation.TC());
-            } else if (!fqTestName.equals(test.inverse().get(annotation.TC()))) {
+            if (!test.containsValue(annotation.similarTestID())) {
+                test.put(result.getMethod().getTestClass().getName() + "." + method.getName(), annotation.similarTestID());
+            } else if (!fqTestName.equals(test.inverse().get(annotation.similarTestID()))) {
                 warnings.add(Pair.of(fqTestName, String.format("Annotates a previously used TC [%s] reported by [%s].",
-                        annotation.TC(),
-                        test.inverse().get(annotation.TC()))));
+                        annotation.similarTestID(),
+                        test.inverse().get(annotation.similarTestID()))));
             }
         }
     }
@@ -430,7 +435,7 @@ public class TestReport implements IReporter, ISuiteListener {
         return result;
     }
 
-    private void generateFailureTable(IResultMap map, String tableTitle, String cssClass) throws InvalidKeyException, NoSuchAlgorithmException {
+    private void generateFailureTable(IResultMap map, String tableTitle, String cssClass) {
 
         if (map.size() == 0) {
             return;
@@ -440,13 +445,13 @@ public class TestReport implements IReporter, ISuiteListener {
         htmlBuilder.append("<table>");
         htmlBuilder.append(String.format("<tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr>",
                 "Test Case ID",
-                "Clean Test Case ID",
+                "Similar Test Case ID",
                 "Test Name",
                 "Error",
                 "Groups",
                 "Duration"));
 
-        for (ITestResult result : getSortedMethods(map, new FailedTestSorter<ITestResult>())) {
+        for (ITestResult result : getSortedMethods(map, new FailedTestSorter())) {
             ITestNGMethod testMethod = result.getMethod();
             if (result.getMethod().getMethodName().equals(testMethod.getMethodName())) {
                 Throwable cause = result.getThrowable();
@@ -467,7 +472,7 @@ public class TestReport implements IReporter, ISuiteListener {
 
                 htmlBuilder.append(String.format("<tr class=%s>", cssClass));
                 htmlBuilder.append(String.format("<td>%s</td>", getTestCase(testMethod)));
-                htmlBuilder.append(String.format("<td>%s</td>", getCleanTestCaseID(testMethod)));
+                htmlBuilder.append(String.format("<td>%s</td>", getSimilarTestCaseID(testMethod)));
                 htmlBuilder.append(String.format("<td>%s%s<br><b>%s</b></td>",
                         getConfigAnnotation(testMethod),
                         testMethod.getTestClass().getName(),
@@ -488,7 +493,7 @@ public class TestReport implements IReporter, ISuiteListener {
                                       IResultMap failedTestMap,
                                       IResultMap passedTestMap,
                                       String tableTitle,
-                                      String cssClass) throws InvalidKeyException, NoSuchAlgorithmException {
+                                      String cssClass) {
 
         if (skippedTestMap.size() == 0) {
             return;
@@ -519,45 +524,43 @@ public class TestReport implements IReporter, ISuiteListener {
                 "Groups",
                 "Duration"));
 
-        Collection<ITestResult> skippedTests = getSortedMethods(skippedTestMap, new FailedTestSorter<ITestResult>());
-        Collection<ITestResult> failedTests = getSortedMethods(failedTestMap, new FailedTestSorter<ITestResult>());
-        Collection<ITestResult> passedTests = getSortedMethods(passedTestMap, new PassedTestSorter<ITestResult>());
+        Collection<ITestResult> skippedTests = getSortedMethods(skippedTestMap, new FailedTestSorter());
+        Collection<ITestResult> failedTests = getSortedMethods(failedTestMap, new FailedTestSorter());
+        Collection<ITestResult> passedTests = getSortedMethods(passedTestMap, new PassedTestSorter());
 
         for (ITestResult result : skippedTests) {
             ITestNGMethod testMethod = result.getMethod();
-            if (failedTests.iterator().hasNext() || passedTests.iterator().hasNext()) {
-                if (result.getMethod().getMethodName().equals(testMethod.getMethodName())
-                        && !failedTests.iterator().next().getMethod().getMethodName().contains(result.getMethod().getMethodName())
-                        && !passedTests.iterator().next().getMethod().getMethodName().contains(result.getMethod().getMethodName())) {
-                    Throwable cause = result.getThrowable();
-                    String errorMessage = "";
-                    String groupsString = Arrays.toString(testMethod.getGroups()).replace("[", "").replace("]", "");
-                    String dependsOnString = Arrays.toString(testMethod.getGroupsDependedUpon()).replace("[", "").replace("]", "");
-                    if (!dependsOnString.isEmpty()) {
-                        groupsString += "<b><br>dependsOn:</b> " + dependsOnString;
-                    }
-
-                    if (cause != null) {
-                        errorMessage = cause.getClass().toString() + ":" + cause.getMessage();
-
-                        if (errorMessage.length() > MAX_ERROR_LENGTH) {
-                            errorMessage = errorMessage.substring(0, MAX_ERROR_LENGTH) + "...";
-                        }
-                    }
-
-                    htmlBuilder.append(String.format("<tr class=%s>", cssClass));
-                    htmlBuilder.append(String.format("<td>%s</td>", getTestCase(testMethod)));
-                    htmlBuilder.append(String.format("<td>%s%s<br><b>%s</b></td>",
-                            getConfigAnnotation(testMethod),
-                            testMethod.getTestClass().getName(),
-                            getLogLink(testMethod, result)));
-                    htmlBuilder.append(String.format("<td><div class='errorData'><pre><xmp>%s</xmp>%s</pre></div></td>",
-                            errorMessage,
-                            getStackTraceHtml(cause)));
-                    htmlBuilder.append(String.format("<td>%s</td>", groupsString));
-                    htmlBuilder.append(String.format("<td>%s</td>", getFormattedTimeFromMilliseconds(result.getEndMillis() - result.getStartMillis())));
-                    htmlBuilder.append("</tr>");
+            if ((failedTests.iterator().hasNext() || passedTests.iterator().hasNext()) && (result.getMethod().getMethodName().equals(testMethod.getMethodName())
+                    && !failedTests.iterator().next().getMethod().getMethodName().contains(result.getMethod().getMethodName())
+                    && !passedTests.iterator().next().getMethod().getMethodName().contains(result.getMethod().getMethodName()))) {
+                Throwable cause = result.getThrowable();
+                String errorMessage = "";
+                String groupsString = Arrays.toString(testMethod.getGroups()).replace("[", "").replace("]", "");
+                String dependsOnString = Arrays.toString(testMethod.getGroupsDependedUpon()).replace("[", "").replace("]", "");
+                if (!dependsOnString.isEmpty()) {
+                    groupsString += "<b><br>dependsOn:</b> " + dependsOnString;
                 }
+
+                if (cause != null) {
+                    errorMessage = cause.getClass().toString() + ":" + cause.getMessage();
+
+                    if (errorMessage.length() > MAX_ERROR_LENGTH) {
+                        errorMessage = errorMessage.substring(0, MAX_ERROR_LENGTH) + "...";
+                    }
+                }
+
+                htmlBuilder.append(String.format("<tr class=%s>", cssClass));
+                htmlBuilder.append(String.format("<td>%s</td>", getTestCase(testMethod)));
+                htmlBuilder.append(String.format("<td>%s%s<br><b>%s</b></td>",
+                        getConfigAnnotation(testMethod),
+                        testMethod.getTestClass().getName(),
+                        getLogLink(testMethod, result)));
+                htmlBuilder.append(String.format("<td><div class='errorData'><pre><xmp>%s</xmp>%s</pre></div></td>",
+                        errorMessage,
+                        getStackTraceHtml(cause)));
+                htmlBuilder.append(String.format("<td>%s</td>", groupsString));
+                htmlBuilder.append(String.format("<td>%s</td>", getFormattedTimeFromMilliseconds(result.getEndMillis() - result.getStartMillis())));
+                htmlBuilder.append("</tr>");
             }
         }
         htmlBuilder.append("</table>");
@@ -568,12 +571,12 @@ public class TestReport implements IReporter, ISuiteListener {
         String result = "";
         Tracking annotation = testMethod.getConstructorOrMethod().getMethod().getAnnotation(Tracking.class);
         if (annotation != null) {
-            result = "TC" + annotation.TC();
+            result = "TMTT" + annotation.TC();
         }
         return result;
     }
 
-    private String getCleanTestCaseID(ITestNGMethod testMethod) {
+    private String getSimilarTestCaseID(ITestNGMethod testMethod) {
         String result = "";
         Tracking annotation = testMethod.getConstructorOrMethod().getMethod().getAnnotation(Tracking.class);
         if (annotation != null) {
@@ -628,11 +631,10 @@ public class TestReport implements IReporter, ISuiteListener {
         return html;
     }
 
-    private void generateSeleniumTable(ITestContext testContext) throws IOException {
-        String reportName = new File(Paths.get("").toAbsolutePath().toString()).getName();
-        String buildLink = "None";
+    private void generateSeleniumTable() {
+        new File(Paths.get("").toAbsolutePath().toString()).getName();
         String platformOS = System.getProperty("os.name");
-        String deviceName = System.getProperty("selenium.browserName");
+        String deviceName = System.getProperty("browserName");
         htmlBuilder.append("<div><table>");
 
         htmlBuilder.append("<tr>");
@@ -651,7 +653,7 @@ public class TestReport implements IReporter, ISuiteListener {
         htmlBuilder.append("</br>");
     }
 
-    private static long getElapsedMilliseconds() {
+    private long getElapsedMilliseconds() {
         return System.currentTimeMillis() - suiteStartTimeInMilliseconds;
     }
 
@@ -692,11 +694,9 @@ public class TestReport implements IReporter, ISuiteListener {
             paramSuffix = "<details><summary>params</summary>" + Arrays.toString(params) + "</details>";
         }
 
-        String href = logFile.exists() ?
+        return logFile.exists() ?
                 String.format("<a title='%s' href=\"./logs/%s\">%s %s</a>", description, fullTestName + ".log", methodName, paramSuffix) :
                 String.format("<div title='%s'>%s %s</div>", description, methodName, paramSuffix);
-
-        return href;
     }
 
     private String getTestLogLink() {
@@ -709,24 +709,13 @@ public class TestReport implements IReporter, ISuiteListener {
     }
 
     private Collection<ITestResult> getSortedMethods(IResultMap tests, Comparator<ITestResult> comparator) {
-        List<ITestResult> sortedList = new ArrayList<ITestResult>();
+        List<ITestResult> sortedList = new ArrayList<>();
         sortedList.addAll(tests.getAllResults());
         Collections.sort(sortedList, comparator);
         return sortedList;
     }
 
-    private ITestContext getTestContext() {
-        ITestContext context = null;
-        for (ISuite suite : testSuites) {
-            Map<String, ISuiteResult> suiteResult = suite.getResults();
-            for (ISuiteResult result : suiteResult.values()) {
-                context = result.getTestContext();
-            }
-        }
-        return context;
-    }
-
-    private class PassedTestSorter<T extends ITestResult> implements Comparator<ITestResult> {
+    private class PassedTestSorter implements Comparator<ITestResult> {
 
         @Override
         public int compare(ITestResult result1, ITestResult result2) {
@@ -741,7 +730,7 @@ public class TestReport implements IReporter, ISuiteListener {
         }
     }
 
-    private class FailedTestSorter<T extends ITestResult> implements Comparator<ITestResult> {
+    private class FailedTestSorter implements Comparator<ITestResult> {
 
         @Override
         public int compare(ITestResult result1, ITestResult result2) {

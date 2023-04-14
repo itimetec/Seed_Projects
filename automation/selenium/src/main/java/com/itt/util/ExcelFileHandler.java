@@ -1,6 +1,5 @@
 package com.itt.util;
 
-import com.aspose.cells.Workbook;
 import com.itt.constants.FileType;
 import com.itt.constants.ResourceName;
 import com.itt.seleniumHelper.Wait;
@@ -17,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.io.FileReader;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
@@ -462,22 +460,6 @@ public class ExcelFileHandler {
         }
     }
 
-    public static String convertBase64String(String filePath) {
-        String base64ConvertedValue = "";
-        File file = new File(filePath);
-        try (FileInputStream imageInFile = new FileInputStream(file)) {
-            // Reading a file from file system
-            byte fileData[] = new byte[(int) file.length()];
-            imageInFile.read(fileData);
-            base64ConvertedValue = Base64.getEncoder().encodeToString(fileData);
-        } catch (FileNotFoundException exception) {
-            LOGGER.info("File not found" + exception.getMessage());
-        } catch (IOException exception) {
-            LOGGER.info("Exception while reading the file " + exception.getMessage());
-        }
-        return base64ConvertedValue;
-    }
-
     public void setDuplicateCellData(ResourceName name, String sheetName, String colName, int rowNum, List<String> data) {
         try {
             int colNum = -1, occurrence = 0;
@@ -510,16 +492,6 @@ public class ExcelFileHandler {
         } catch (Exception e) {
             LOGGER.info("Row: {}  or Column: {}  does not exist in xls to write the data", rowNum, colName);
             LOGGER.info("Reason : ", e.getMessage());
-        }
-    }
-
-    public void convertXLSToXLSX(String resourceName) {
-        Wait.waitTillFileExists(getResourcePath(resourceName, FileType.XLS), 60, TimeUnit.SECONDS);
-        try {
-            Workbook workbook = new Workbook(getResourcePath(resourceName, FileType.XLS));
-            workbook.save(getResourcePath(resourceName, FileType.XLSX));
-        } catch (Exception e) {
-            throw new RuntimeException("Path set is incorrect" + e.getMessage());
         }
     }
 

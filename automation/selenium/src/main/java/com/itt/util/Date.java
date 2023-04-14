@@ -143,19 +143,6 @@ public class Date {
         return java.time.LocalDate.now().getMonth();
     }
 
-    public static String getLastDayOfCurrentMonth(Format format) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.add(Calendar.DATE, -1);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format.toString());
-        return dateFormat.format(calendar.getTime());
-    }
-
-    public static String[] getShortMonths() {
-        return DateFormatSymbols.getInstance().getShortMonths();
-    }
-
     public static boolean isValidDate(Format format, String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(format.toString());
         dateFormat.setLenient(false);
@@ -169,10 +156,6 @@ public class Date {
 
     public static LocalDate convertDateToSpecifiedFormat(Format format, String date) {
         return DateTimeFormat.forPattern(String.valueOf(Date.Format.YYYY_MM_DD)).parseLocalDate(date);
-    }
-
-    public static String addDays(String date, int days) {
-        return java.time.LocalDate.parse(date).plusDays(days).toString();
     }
 
     public static String getOnlyYearFromDate(String date) {

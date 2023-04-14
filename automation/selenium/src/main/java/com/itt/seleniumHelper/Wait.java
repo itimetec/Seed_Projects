@@ -231,30 +231,6 @@ public class Wait {
         });
     }
 
-    public static void waitForSlushBucketToLoad(WebDriver driver, Select dropdown) {
-        getWebDriverWait(driver).until(new ExpectedCondition<Object>() {
-            @Override
-            public Object apply(WebDriver input) {
-                String firstOption = dropdown.getOptions().get(0).getText();
-                if (firstOption.equals("--None--") || firstOption.equals("Loading") || firstOption.isEmpty())
-                    return false;
-                return true;
-            }
-        });
-    }
-
-    public static void waitForSlushBucketToPopulate(WebDriver driver, Select dropdown) {
-        getWebDriverWait(driver).until(new ExpectedCondition<Object>() {
-            @Override
-            public Object apply(WebDriver input) {
-                List<WebElement> firstOption = dropdown.getOptions();
-                if (firstOption.size() == 0 || firstOption.get(0).getText().equals("--None--") || firstOption.get(0).getText().equals("Loading") || firstOption.get(0).getText().isEmpty())
-                    return false;
-                return true;
-            }
-        });
-    }
-
     public static void reloadUntilTextTobe(WebDriver driver, final By locator, String expectedText) {
         LOGGER.info(String.format("Reloading page until the presence of element : %s, ", locator));
         getWebDriverWait(driver).until(new ExpectedCondition<Object>() {
