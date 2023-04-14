@@ -37,9 +37,4 @@ public class MouseAction {
         LOGGER.info("Performing double click on element: {}", element);
         getActions(driver).doubleClick(element).perform();
     }
-
-    public static void doubleClickChildElement(WebDriver driver, WebElement element, final By childLocator) {
-        LOGGER.info("Performing double click on locator: {}", childLocator);
-        getActions(driver).doubleClick(element.findElement(childLocator)).perform();
-    }
 }
